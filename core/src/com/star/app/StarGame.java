@@ -9,14 +9,17 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class StarGame extends ApplicationAdapter {
     private SpriteBatch batch;
     private Background background;
+    private Hero hero;
 
-
-
+    public Hero getHero() {
+        return hero;
+    }
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         background = new Background(this);
+        hero = new Hero();
     }
 
     @Override
@@ -25,12 +28,14 @@ public class StarGame extends ApplicationAdapter {
         update(dt);
         ScreenUtils.clear(0, 0, 0.4f, 1);
         batch.begin();
+        background.render(batch);
+        hero.render(batch);
         batch.end();
     }
 
     public void update(float dt) {
-
         background.update(dt);
+        hero.update(dt);
     }
 
     @Override
