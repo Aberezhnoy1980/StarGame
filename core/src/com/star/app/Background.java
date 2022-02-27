@@ -17,7 +17,7 @@ public class Background {
         public Star() {
             this.position = new Vector2(MathUtils.random(-200, SCREEN_WIDTH + 200),
                     MathUtils.random(-200, SCREEN_HEIGHT + 200));
-            this.velocity = new Vector2(MathUtils.random(-40, 5), 0);
+            this.velocity = new Vector2(MathUtils.random(-40, -5), 0);
             scale = Math.abs(velocity.x / 40f) * 0.8f;
         }
 
