@@ -36,7 +36,6 @@ public class Bullet implements Poolable {
         if (position.x < -20 || position.x > SCREEN_WIDTH + 20 || position.y < -20 || position.y > SCREEN_HEIGHT + 20) {
             deactivate();
         }
-
     }
 
     public void activate(float x, float y, float vx, float vy) {

@@ -23,7 +23,7 @@ public class GameController {
     public void renderAsteroids(int count) {
         for (int i = 0; i < count; i++) {
             ac.setup(MathUtils.random(-200, SCREEN_WIDTH + 200), MathUtils.random(-200, SCREEN_HEIGHT + 200),
-                    MathUtils.random(-500, 500), MathUtils.random(-500, 500));
+                    MathUtils.random(-500, 500), MathUtils.random(-500, 500), MathUtils.random(0.3f, 1.0f));
         }
     }
 
@@ -56,12 +56,12 @@ public class GameController {
             Bullet b = bc.getActiveList().get(i);
             for (int j = 0; j < ac.getActiveList().size(); j++) {
                 Asteroid a = ac.getActiveList().get(j);
-                // Если разнокалиберные камни, то можно вот так неравенство оформить,
-                // предварительно добавив константу радиуса (ну, можно и нативно прописать),
-                // геттер на нее и зарандомить масштаб, просто ради эксперемента сделал.
-                if (a.getPosition().dst(b.getPosition()) < a.getRadius() * a.getScale()) {
+                if (a.getHitArea().contains(b.getPosition())) {
                     b.deactivate();
-                    a.deactivate();
+                    if(a.takeDamage(1)) {
+                        hero.addScore(a.getHpMax() * 100);
+                    }
+                    break;
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.star.app.screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.GameController;
 import com.star.app.game.WorldRenderer;
+import com.star.app.screen.utils.Assets;
 
 public class GameScreen extends AbstractScreen {
 
@@ -16,6 +17,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void show() {
+        Assets.getInstance().loadAssets(ScreenManager.ScreenType.GAME);
         this.gc = new GameController();
         this.wr = new WorldRenderer(gc, batch);
     }
