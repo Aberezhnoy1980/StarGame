@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.screen.ScreenManager;
@@ -16,6 +17,9 @@ public class Hero {
     private Vector2 position;
     private Vector2 velocity;
     private float angle;
+    private int maxHp;
+    private int hp;
+    private Circle hitAria;
     private float directEnginePower;
     private float reverseEnginePower;
     private float fireTimer;
@@ -29,6 +33,9 @@ public class Hero {
         this.position = new Vector2(640, 360);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
+        this.maxHp = 100;
+        this.hp = maxHp;
+        this.hitAria = new Circle(position, 28);
         this.directEnginePower = 700.0f;
         this.reverseEnginePower = 200.0f;
         this.bulletSpeed = 500f;
@@ -46,6 +53,14 @@ public class Hero {
         return angle;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
+    public Circle getHitAria() {
+        return hitAria;
+    }
+
     public int getScore() {
         return score;
     }
@@ -56,6 +71,10 @@ public class Hero {
 
     public void addScore(int amount) {
         score += amount;
+    }
+
+    public void takeDamage(int amount) {
+        hp -= amount;
     }
 
     public void render(SpriteBatch batch) {
@@ -114,6 +133,7 @@ public class Hero {
             stopFactor = 0.0f;
         }
         velocity.scl(stopFactor);
+        hitAria.setPosition(position);
 
         checkBorders();
     }
