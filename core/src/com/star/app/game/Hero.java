@@ -15,7 +15,9 @@ public class Hero {
     private Vector2 velocity;
     private float angle;
     private float directEnginePower;
+    private float reverseEnginePower;
     private float fireTimer;
+    private float bulletSpeed;
 
     public Hero(GameController gc) {
         this.gc = gc;
@@ -24,6 +26,8 @@ public class Hero {
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.directEnginePower = 700.0f;
+        this.reverseEnginePower = 200.0f;
+        this.bulletSpeed = 500f;
     }
 
     public Vector2 getPosition() {
@@ -50,8 +54,8 @@ public class Hero {
             if (fireTimer > 0.2f) {
                 fireTimer = 0.0f;
                 gc.getBulletController().setup(position.x, position.y,
-                        MathUtils.cosDeg(angle) * 500f + velocity.x,
-                        MathUtils.sinDeg(angle) * 500f + velocity.y);
+                        MathUtils.cosDeg(angle) * bulletSpeed + velocity.x,
+                        MathUtils.sinDeg(angle) * bulletSpeed + velocity.y);
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -65,8 +69,8 @@ public class Hero {
             velocity.y += MathUtils.sinDeg(angle) * directEnginePower * dt;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            velocity.x -= MathUtils.cosDeg(angle) * 100f * dt;
-            velocity.y -= MathUtils.sinDeg(angle) * 100f * dt;
+            velocity.x -= MathUtils.cosDeg(angle) * reverseEnginePower * dt;
+            velocity.y -= MathUtils.sinDeg(angle) * reverseEnginePower * dt;
         }
 
         position.mulAdd(velocity, dt);

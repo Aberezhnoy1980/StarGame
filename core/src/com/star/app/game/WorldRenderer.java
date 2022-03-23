@@ -17,6 +17,7 @@ public class WorldRenderer {
         ScreenUtils.clear(0, 0, 0.4f, 1);
         batch.begin();
         gc.getBackground().render(batch);
+        gc.getAsteroidController().render(batch);
         gc.getHero().render(batch);
         gc.getBulletController().render(batch);
         batch.end();
