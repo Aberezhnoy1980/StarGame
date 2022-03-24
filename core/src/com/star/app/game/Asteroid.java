@@ -112,16 +112,15 @@ public class Asteroid implements Poolable {
         velocity.y = MathUtils.random(-500, 500);
         angle = MathUtils.random(0.0f, 360.0f);
         rotationSpeed = MathUtils.random(-180.0f, 180.0f);
-//        scale = MathUtils.random(0.3f, 1.0f);
     }
 
     public void activate(float x, float y, float vx, float vy, float scale) {
         position.set(x, y);
         velocity.set(vx, vy);
-        hpMax = (int) (3 * scale);
+        hpMax = (int) (10 * scale);
         hp = hpMax;
         angle = MathUtils.random(0.0f, 360.0f);
-        this.scale = scale; //MathUtils.random(0.3f, 1.0f);
+        this.scale = scale;
         rotationSpeed = MathUtils.random(-180.0f, 180.0f);
         hitArea.setPosition(x, y);
         hitArea.setRadius(RADIUS * scale * 0.9f);

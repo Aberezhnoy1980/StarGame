@@ -2,12 +2,13 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
@@ -26,6 +27,8 @@ public class Hero {
     private float bulletSpeed;
     private int score;
     private int scoreView;
+    private StringBuilder sb;
+    private Weapon currentWeapon;
 
     public Hero(GameController gc) {
         this.gc = gc;
@@ -38,35 +41,31 @@ public class Hero {
         this.hitAria = new Circle(position, 28);
         this.directEnginePower = 700.0f;
         this.reverseEnginePower = 200.0f;
-        this.bulletSpeed = 500f;
-    }
+        this.bulletSpeed = 2000f;
+        this.sb = new StringBuilder();
 
-    public Vector2 getPosition() {
-        return position;
+        this.currentWeapon = new Weapon(gc, this,0.2f,1, 2000, 100,
+                new Vector3[]{
+                        new Vector3(28, 0,0),
+                        new Vector3(28, -90,-5),
+                        new Vector3(28, 90,5),
+                });
     }
 
     public Vector2 getVelocity() {
         return velocity;
     }
 
+    public Vector2 getPosition() {
+        return position;
+    }
+
     public float getAngle() {
         return angle;
     }
 
-    public int getHp() {
-        return hp;
-    }
-
     public Circle getHitAria() {
         return hitAria;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public int getScoreView() {
-        return scoreView;
     }
 
     public void addScore(int amount) {
@@ -77,6 +76,14 @@ public class Hero {
         hp -= amount;
     }
 
+    public void renderGUI(SpriteBatch batch, BitmapFont font) {
+        sb.setLength(0);
+        sb.append("SCORE:").append(scoreView).append("\n");
+        sb.append("HP: ").append(hp).append(" / ").append(maxHp).append("\n");
+        sb.append("AMMO: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        font.draw(batch, sb, 20, 700);
+    }
+
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - 32, position.y - 32, 32, 32,
                 64, 64, 1, 1, angle);
@@ -84,32 +91,10 @@ public class Hero {
 
     public void update(float dt) {
         fireTimer += dt;
-
-        if (scoreView < score) {
-            scoreView += 1000 * dt;
-            if(scoreView > score) {
-                scoreView = score;
-            }
-        }
+        updateScore(dt);
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if (fireTimer > 0.2f) {
-                fireTimer = 0.0f;
-
-                float wx = position.x + MathUtils.cosDeg(angle + 90) * 20;
-                float wy = position.y + MathUtils.sinDeg(angle + 90) * 20;
-
-                gc.getBulletController().setup(wx, wy,
-                        MathUtils.cosDeg(angle) * bulletSpeed + velocity.x,
-                        MathUtils.sinDeg(angle) * bulletSpeed + velocity.y);
-
-                wx = position.x + MathUtils.cosDeg(angle - 90) * 20;
-                wy = position.y + MathUtils.sinDeg(angle - 90) * 20;
-
-                gc.getBulletController().setup(wx, wy,
-                        MathUtils.cosDeg(angle) * bulletSpeed + velocity.x,
-                        MathUtils.sinDeg(angle) * bulletSpeed + velocity.y);
-            }
+            tryToFire();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             angle += 180 * dt;
@@ -120,10 +105,46 @@ public class Hero {
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             velocity.x += MathUtils.cosDeg(angle) * directEnginePower * dt;
             velocity.y += MathUtils.sinDeg(angle) * directEnginePower * dt;
+
+            float bx = position.x + MathUtils.cosDeg(angle + 180) * 25;
+            float by = position.y + MathUtils.sinDeg(angle + 180) * 25;
+
+            for (int i = 0; i < 3; i++) {
+                gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
+                        velocity.x * -0.1f + MathUtils.random(-20, 20), velocity.y * -0.1f + MathUtils.random(-20, 20),
+                        0.5f,
+                        1.2f, 0.2f,
+                        1.0f, 0.5f, 0.0f, 1.0f,
+                        1.0f, 0.5f, 0.0f, 1.0f);
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             velocity.x -= MathUtils.cosDeg(angle) * reverseEnginePower * dt;
             velocity.y -= MathUtils.sinDeg(angle) * reverseEnginePower * dt;
+
+            float bx = position.x + MathUtils.cosDeg(angle - 90) * 25;
+            float by = position.y + MathUtils.sinDeg(angle - 90) * 25;
+
+            for (int i = 0; i < 3; i++) {
+                gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
+                        velocity.x * 0.1f + MathUtils.random(-20, 20), velocity.y * 0.1f + MathUtils.random(-20, 20),
+                        0.2f,
+                        1.2f, 0.2f,
+                        1.0f, 0.5f, 0.0f, 1.0f,
+                        1.0f, 1.0f, 1.0f, 0.0f);
+            }
+
+            bx = position.x + MathUtils.cosDeg(angle + 90) * 25;
+            by = position.y + MathUtils.sinDeg(angle + 90) * 25;
+
+            for (int i = 0; i < 3; i++) {
+                gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
+                        velocity.x * 0.1f + MathUtils.random(-20, 20), velocity.y * 0.1f + MathUtils.random(-20, 20),
+                        0.2f,
+                        1.2f, 0.2f,
+                        1.0f, 0.5f, 0.0f, 1.0f,
+                        1.0f, 1.0f, 1.0f, 0.0f);
+            }
         }
 
         position.mulAdd(velocity, dt);
@@ -136,6 +157,22 @@ public class Hero {
         hitAria.setPosition(position);
 
         checkBorders();
+    }
+
+    private void updateScore(float dt) {
+        if (scoreView < score) {
+            scoreView += 1000 * dt;
+            if (scoreView > score) {
+                scoreView = score;
+            }
+        }
+    }
+
+    private void tryToFire() {
+        if (fireTimer > 0.2f) {
+            fireTimer = 0.0f;
+            currentWeapon.fire();
+        }
     }
 
     public void checkBorders() {
@@ -156,4 +193,5 @@ public class Hero {
             velocity.y *= -0.3f;
         }
     }
+
 }
