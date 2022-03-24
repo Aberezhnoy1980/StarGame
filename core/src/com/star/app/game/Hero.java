@@ -29,6 +29,7 @@ public class Hero {
     private int scoreView;
     private StringBuilder sb;
     private Weapon currentWeapon;
+    private int gold;
 
     public Hero(GameController gc) {
         this.gc = gc;
@@ -43,6 +44,7 @@ public class Hero {
         this.reverseEnginePower = 200.0f;
         this.bulletSpeed = 2000f;
         this.sb = new StringBuilder();
+        this.gold = 0;
 
         this.currentWeapon = new Weapon(gc, this,0.2f,1, 2000, 100,
                 new Vector3[]{
@@ -68,6 +70,10 @@ public class Hero {
         return hitAria;
     }
 
+    public Weapon getCurrentWeapon() {
+        return currentWeapon;
+    }
+
     public void addScore(int amount) {
         score += amount;
     }
@@ -81,6 +87,7 @@ public class Hero {
         sb.append("SCORE:").append(scoreView).append("\n");
         sb.append("HP: ").append(hp).append(" / ").append(maxHp).append("\n");
         sb.append("AMMO: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        sb.append("GOLD: ").append(gold).append("\n");
         font.draw(batch, sb, 20, 700);
     }
 
@@ -165,6 +172,23 @@ public class Hero {
             if (scoreView > score) {
                 scoreView = score;
             }
+        }
+    }
+
+    public void consume(PowerUp p) {
+        switch (p.getType()) {
+            case HEALTH:
+                hp += p.getPower();
+                if (hp > maxHp) {
+                    hp = maxHp;
+                }
+                break;
+            case AMMO:
+                currentWeapon.addAmmos(p.getPower());
+                break;
+            case GOLD:
+                gold += p.getPower();
+                break;
         }
     }
 

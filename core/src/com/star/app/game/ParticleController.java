@@ -8,28 +8,17 @@ import com.star.app.game.helpers.ObjectPool;
 import com.star.app.screen.utils.Assets;
 
 public class ParticleController extends ObjectPool<Particle> {
-    public class EffectBuilder {
-        public void buildMonsterSplash(float x, float y) {
-            for (int i = 0; i < 15; i++) {
-                float randomAngle = MathUtils.random(0, 6.28f);
-                float randomSpeed = MathUtils.random(0, 50.0f);
-                setup(x, y, (float) Math.cos(randomAngle) * randomSpeed, (float) Math.sin(randomAngle) * randomSpeed, 1.2f, 2.0f, 1.8f, 1, 0, 0, 1, 1, 0, 0, 0.2f);
-            }
-        }
-    }
-
     private GameController gc;
     private TextureRegion oneParticle;
     private EffectBuilder effectBuilder;
-
-    public EffectBuilder getEffectBuilder() {
-        return effectBuilder;
-    }
-
     public ParticleController(GameController gc) {
         this.gc = gc;
         this.oneParticle = Assets.getInstance().getAtlas().findRegion("star16");
         this.effectBuilder = new EffectBuilder();
+    }
+
+    public EffectBuilder getEffectBuilder() {
+        return effectBuilder;
     }
 
     @Override
@@ -83,5 +72,50 @@ public class ParticleController extends ObjectPool<Particle> {
 
     public float lerp(float value1, float value2, float point) {
         return value1 + (value2 - value1) * point;
+    }
+
+    public class EffectBuilder {
+        public void buildMonsterSplash(float x, float y) {
+            for (int i = 0; i < 15; i++) {
+                float randomAngle = MathUtils.random(0, 6.28f);
+                float randomSpeed = MathUtils.random(0, 50.0f);
+                setup(x, y, (float) Math.cos(randomAngle) * randomSpeed, (float) Math.sin(randomAngle) * randomSpeed, 1.2f, 2.0f, 1.8f, 1, 0, 0, 1, 1, 0, 0, 0.2f);
+            }
+        }
+
+        public void takePowerUpsEffect(PowerUp p) {
+            switch (p.getType()) {
+                case HEALTH:
+                    for (int i = 0; i < 16; i++) {
+                        float angle = 6.28f / 16.0f * i;
+                        setup(p.getPosition().x, p.getPosition().y,
+                                (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f,
+                                0.8f, 3.0f, 2.5f,
+                                0, 1, 0, 1,
+                                0.2f, 1, 0, 0.4f);
+                    }
+                    break;
+                case GOLD:
+                    for (int i = 0; i < 16; i++) {
+                        float angle = 6.28f / 16.0f * i;
+                        setup(p.getPosition().x, p.getPosition().y,
+                                (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f,
+                                0.8f, 3.0f, 2.5f,
+                                1, 1, 0, 1,
+                                1, 0.7f, 0, 0.4f);
+                    }
+                    break;
+                case AMMO:
+                    for (int i = 0; i < 16; i++) {
+                        float angle = 6.28f / 16.0f * i;
+                        setup(p.getPosition().x, p.getPosition().y,
+                                (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f,
+                                0.8f, 3.0f, 2.5f,
+                                1, 0, 0, 1,
+                                1, 0, 0.8f, 0.4f);
+                    }
+                    break;
+            }
+        }
     }
 }
