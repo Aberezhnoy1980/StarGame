@@ -12,6 +12,7 @@ public class GameController {
     private AsteroidController ac;
     private BulletController bc;
     private ParticleController pc;
+    private PowerUpsController puc;
     private Hero hero;
     private Vector2 tempVector;
 
@@ -20,6 +21,7 @@ public class GameController {
         this.ac = new AsteroidController(this);
         this.bc = new BulletController(this);
         this.pc = new ParticleController(this);
+        this.puc = new PowerUpsController(this);
         this.hero = new Hero(this);
         this.tempVector = new Vector2();
         renderAsteroids(10);
@@ -52,11 +54,16 @@ public class GameController {
         return pc;
     }
 
+    public PowerUpsController getPowerUpsController() {
+        return puc;
+    }
+
     public void update(float dt) {
         background.update(dt);
         ac.update(dt);
         bc.update(dt);
         pc.update(dt);
+        puc.update(dt);
         hero.update(dt);
         checkCollisions();
     }
@@ -75,8 +82,11 @@ public class GameController {
                             1.0f, 0.5f, 0.0f, 1.0f,
                             1.0f, 1.0f, 1.0f, 0.0f);
                     b.deactivate();
-                    if (a.takeDamage(1)) {
+                    if (a.takeDamage(hero.getCurrentWeapon().getDamage())) {
                         hero.addScore(a.getHpMax() * 100);
+                        for (int k = 0; k < 3; k++) {
+                            puc.setup(a.getPosition().x, a.getPosition().y, a.getScale() * 0.25f);
+                        }
                     }
                     break;
                 }
@@ -102,6 +112,16 @@ public class GameController {
                     hero.addScore(a.getHpMax() * 50);
                 }
                 hero.takeDamage(2);
+            }
+        }
+
+        // столкновения призов и героя
+        for (int i = 0; i < puc.getActiveList().size(); i++) {
+            PowerUp p = puc.getActiveList().get(i);
+            if (hero.getHitAria().contains(p.getPosition())) {
+                hero.consume(p);
+                pc.getEffectBuilder().takePowerUpsEffect(p);
+                p.deactivate();
             }
         }
     }
