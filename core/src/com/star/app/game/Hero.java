@@ -37,7 +37,7 @@ public class Hero {
         this.position = new Vector2(640, 360);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
-        this.maxHp = 100;
+        this.maxHp = 10;
         this.hp = maxHp;
         this.hitAria = new Circle(position, 28);
         this.directEnginePower = 700.0f;
@@ -54,6 +54,9 @@ public class Hero {
                 });
     }
 
+    public int getScore() {
+        return score;
+    }
     public Vector2 getVelocity() {
         return velocity;
     }
@@ -72,6 +75,10 @@ public class Hero {
 
     public Weapon getCurrentWeapon() {
         return currentWeapon;
+    }
+
+    public int getHp() {
+        return hp;
     }
 
     public void addScore(int amount) {
