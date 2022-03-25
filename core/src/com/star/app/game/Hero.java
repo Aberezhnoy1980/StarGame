@@ -46,17 +46,22 @@ public class Hero {
         this.sb = new StringBuilder();
         this.gold = 0;
 
-        this.currentWeapon = new Weapon(gc, this,0.2f,1, 2000, 100,
+        this.currentWeapon = new Weapon(gc, this, 0.2f, 1, 2000, 100,
                 new Vector3[]{
-                        new Vector3(28, 0,0),
-                        new Vector3(28, -90,-5),
-                        new Vector3(28, 90,5),
+                        new Vector3(28, 0, 0),
+                        new Vector3(28, -90, -5),
+                        new Vector3(28, 90, 5),
                 });
     }
 
     public int getScore() {
         return score;
     }
+
+    public int getGold() {
+        return gold;
+    }
+
     public Vector2 getVelocity() {
         return velocity;
     }
@@ -89,6 +94,10 @@ public class Hero {
         hp -= amount;
     }
 
+    public void setPause(boolean pause) {
+        gc.setPause(pause);
+    }
+
     public void renderGUI(SpriteBatch batch, BitmapFont font) {
         sb.setLength(0);
         sb.append("SCORE:").append(scoreView).append("\n");
@@ -107,6 +116,12 @@ public class Hero {
         fireTimer += dt;
         updateScore(dt);
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            setPause(true);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            setPause(false);
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             tryToFire();
         }

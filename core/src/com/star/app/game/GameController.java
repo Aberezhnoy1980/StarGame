@@ -16,6 +16,7 @@ public class GameController {
     private PowerUpsController puc;
     private Hero hero;
     private Vector2 tempVector;
+    private boolean pause;
 
     public GameController() {
         this.background = new Background(this);
@@ -59,7 +60,14 @@ public class GameController {
         return puc;
     }
 
+    public void setPause(boolean pause) {
+        this.pause = pause;
+    }
+
     public void update(float dt) {
+        if (pause) {
+            return;
+        }
         background.update(dt);
         ac.update(dt);
         bc.update(dt);
@@ -67,6 +75,9 @@ public class GameController {
         puc.update(dt);
         hero.update(dt);
         checkCollisions();
+        if (hero.getHp() <= 0) {
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER, hero);
+        }
     }
 
     public void checkCollisions() {
