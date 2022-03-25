@@ -19,6 +19,7 @@ public class ScreenManager {
     private LoadingScreen loadingScreen;
     private GameScreen gameScreen;
     private MenuScreen menuScreen;
+    private GameOverScreen gameOverScreen;
     private Screen targetScreen;
     private Viewport viewport;
 
@@ -42,7 +43,7 @@ public class ScreenManager {
     }
 
     public enum ScreenType {
-        GAME, MENU
+        GAME, MENU, GAME_OVER
     }
 
     public void init(StarGame game, SpriteBatch batch) {
@@ -52,6 +53,7 @@ public class ScreenManager {
         this.gameScreen = new GameScreen(batch);
         this.menuScreen = new MenuScreen(batch);
         this.loadingScreen = new LoadingScreen(batch);
+        this.gameOverScreen = new GameOverScreen(batch);
     }
 
     public void resize(int width, int height) {
@@ -59,7 +61,7 @@ public class ScreenManager {
         viewport.apply();
     }
 
-    public void changeScreen(ScreenType type) {
+    public void changeScreen(ScreenType type, Object... args) {
         Screen screen = game.getScreen();
         Assets.getInstance().clear();
         if (screen != null) {
@@ -74,6 +76,11 @@ public class ScreenManager {
             case MENU:
                 targetScreen = menuScreen;
                 Assets.getInstance().loadAssets(ScreenType.MENU);
+                break;
+            case GAME_OVER:
+                targetScreen = gameOverScreen;
+                gameOverScreen.setDefeatedHero((Hero) args[0]);
+                Assets.getInstance().loadAssets(ScreenManager.ScreenType.GAME_OVER);
                 break;
         }
     }
