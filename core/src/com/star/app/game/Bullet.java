@@ -3,6 +3,7 @@ package com.star.app.game;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.helpers.Poolable;
+import com.star.app.screen.ScreenManager;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
@@ -39,7 +40,7 @@ public class Bullet implements Poolable {
 
     public void update(float dt) {
         position.mulAdd(velocity, dt);
-        if (position.x < -20 || position.x > SCREEN_WIDTH + 20 || position.y < -20 || position.y > SCREEN_HEIGHT + 20) {
+        if (position.x < -20 || position.x > ScreenManager.SPACE_WIDTH + 20 || position.y < -20 || position.y > ScreenManager.SPACE_HEIGHT + 20) {
             deactivate();
         }
 

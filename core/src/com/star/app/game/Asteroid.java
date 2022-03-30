@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.helpers.Poolable;
+import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
@@ -82,34 +83,34 @@ public class Asteroid implements Poolable {
         angle += rotationSpeed * dt;
 
         // при выходе за пределы параметров ScreenManager обновляются параметры угла атаки (направления), скорости, частоты вращения и размера астероида. Рефакторим переопределение параметров через отдельный метод
-        if (position.x < -200) {
-            position.x = SCREEN_WIDTH + 200;
-            position.y = MathUtils.random(0, SCREEN_HEIGHT);
+        if (position.x < 0) {
+            position.x = ScreenManager.SPACE_WIDTH;
+            position.y = MathUtils.random(0, ScreenManager.SPACE_HEIGHT);
             updateAttackAngleAndVelocityAndRotationSpeed();
 
         }
-        if (position.x > SCREEN_WIDTH + 200) {
-            position.x = -200;
-            position.y = MathUtils.random(0, SCREEN_HEIGHT);
+        if (position.x > ScreenManager.SPACE_WIDTH) {
+            position.x = 0;
+            position.y = MathUtils.random(0, ScreenManager.SPACE_HEIGHT);
             updateAttackAngleAndVelocityAndRotationSpeed();
         }
 
-        if (position.y < -200) {
-            position.y = SCREEN_HEIGHT + 200;
-            position.x = MathUtils.random(0, SCREEN_WIDTH);
+        if (position.y < 0) {
+            position.y = ScreenManager.SPACE_HEIGHT;
+            position.x = MathUtils.random(0, ScreenManager.SPACE_WIDTH);
             updateAttackAngleAndVelocityAndRotationSpeed();
         }
-        if (position.y > SCREEN_HEIGHT + 200) {
-            position.y = -200;
-            position.x = MathUtils.random(0, SCREEN_WIDTH);
+        if (position.y > ScreenManager.SPACE_HEIGHT) {
+            position.y = 0;
+            position.x = MathUtils.random(0, ScreenManager.SPACE_WIDTH);
             updateAttackAngleAndVelocityAndRotationSpeed();
         }
         hitArea.setPosition(position);
     }
 
     public void updateAttackAngleAndVelocityAndRotationSpeed() {
-        velocity.x = MathUtils.random(-500, 500);
-        velocity.y = MathUtils.random(-500, 500);
+        velocity.x = MathUtils.random(-300, 300);
+        velocity.y = MathUtils.random(-300, 300);
         angle = MathUtils.random(0.0f, 360.0f);
         rotationSpeed = MathUtils.random(-180.0f, 180.0f);
     }

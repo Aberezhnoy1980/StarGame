@@ -5,10 +5,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
-
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Background {
     private final int STAR_COUNT = 600;
@@ -19,7 +17,8 @@ public class Background {
 
     public Background(GameController gc) {
         this.gc = gc;
-        this.textureCosmos = new Texture("images/bg.png");
+//        this.textureCosmos = new Texture("images/bg.png");
+        this.textureCosmos = new Texture("images/galaxy3840x2160.jpg");
         this.textureStar = Assets.getInstance().getAtlas().findRegion("star16");
         this.stars = new Star[STAR_COUNT];
         for (int i = 0; i < stars.length; i++) {
@@ -53,19 +52,23 @@ public class Background {
         private float scale;
 
         public Star() {
-            this.position = new Vector2(MathUtils.random(-200, SCREEN_WIDTH + 200),
-                    MathUtils.random(-200, SCREEN_HEIGHT + 200));
+            this.position = new Vector2(MathUtils.random(-200, ScreenManager.SPACE_WIDTH + 200),
+                    MathUtils.random(-200, ScreenManager.SPACE_HEIGHT + 200));
             this.velocity = new Vector2(MathUtils.random(-40, -5), 0);
             scale = Math.abs(velocity.x / 40f) * 0.8f;
         }
 
         public void update(float dt) {
-            position.x += (velocity.x - gc.getHero().getVelocity().x * 0.1f) * dt;
-            position.y += (velocity.y - gc.getHero().getVelocity().y * 0.1f) * dt;
+            if (gc != null) {
+                position.x += (velocity.x - gc.getHero().getVelocity().x * 0.1f) * dt;
+                position.y += (velocity.y - gc.getHero().getVelocity().y * 0.1f) * dt;
+            } else {
+                position.mulAdd(velocity, dt);
+            }
 
             if (position.x < -200) {
-                position.x = SCREEN_WIDTH + 200;
-                position.y = MathUtils.random(0, SCREEN_HEIGHT);
+                position.x = ScreenManager.SPACE_WIDTH + 200;
+                position.y = MathUtils.random(0, ScreenManager.SPACE_HEIGHT);
                 scale = Math.abs(velocity.x / 40f) * 0.8f;
             }
         }

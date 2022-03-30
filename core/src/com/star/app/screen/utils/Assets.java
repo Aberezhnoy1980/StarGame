@@ -37,6 +37,7 @@ public class Assets {
             case GAME:
                 assetManager.load("images/game.pack.atlas", TextureAtlas.class);
                 createStandardFont(26);
+                createStandardFont(20);
                 break;
             case MENU:
                 assetManager.load("images/game.pack.atlas", TextureAtlas.class);

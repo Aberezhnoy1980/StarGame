@@ -1,7 +1,10 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.star.app.screen.ScreenManager;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
@@ -17,8 +20,9 @@ public class GameController {
     private Hero hero;
     private Vector2 tempVector;
     private boolean pause;
+    private Stage stage;
 
-    public GameController() {
+    public GameController(SpriteBatch batch) {
         this.background = new Background(this);
         this.ac = new AsteroidController(this);
         this.bc = new BulletController(this);
@@ -26,13 +30,16 @@ public class GameController {
         this.puc = new PowerUpsController(this);
         this.hero = new Hero(this);
         this.tempVector = new Vector2();
+        this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
+        this.stage.addActor(hero.getShop());
+        Gdx.input.setInputProcessor(stage);
         renderAsteroids(10);
     }
 
     public void renderAsteroids(int count) {
         for (int i = 0; i < count; i++) {
-            ac.setup(MathUtils.random(-200, SCREEN_WIDTH + 200), MathUtils.random(-200, SCREEN_HEIGHT + 200),
-                    MathUtils.random(-500, 500), MathUtils.random(-500, 500), MathUtils.random(0.3f, 1.0f));
+            ac.setup(MathUtils.random(0, ScreenManager.SPACE_WIDTH), MathUtils.random(0, ScreenManager.SPACE_HEIGHT),
+                    MathUtils.random(-300, 300), MathUtils.random(-300, 300), MathUtils.random(0.3f, 1.0f));
         }
     }
 
@@ -60,6 +67,10 @@ public class GameController {
         return puc;
     }
 
+    public Stage getStage() {
+        return stage;
+    }
+
     public void setPause(boolean pause) {
         this.pause = pause;
     }
@@ -74,8 +85,9 @@ public class GameController {
         pc.update(dt);
         puc.update(dt);
         hero.update(dt);
+        stage.act(dt);
         checkCollisions();
-        if (hero.getHp() <= 0) {
+        if (!hero.isAlive()) {
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER, hero);
         }
     }
@@ -136,5 +148,9 @@ public class GameController {
                 p.deactivate();
             }
         }
+    }
+
+    public void dispose(){
+        background.dispose();
     }
 }

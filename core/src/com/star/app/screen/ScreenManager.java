@@ -1,6 +1,8 @@
 package com.star.app.screen;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -9,6 +11,9 @@ import com.star.app.game.Hero;
 import com.star.app.screen.utils.Assets;
 
 public class ScreenManager {
+    public static final int SPACE_WIDTH = 3840;
+    public static final int SPACE_HEIGHT = 2160;
+
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;
     public static final int HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2;
@@ -22,6 +27,7 @@ public class ScreenManager {
     private GameOverScreen gameOverScreen;
     private Screen targetScreen;
     private Viewport viewport;
+    private Camera camera;
 
     private ScreenManager() {
     }
@@ -32,6 +38,10 @@ public class ScreenManager {
 
     public Viewport getViewport() {
         return viewport;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
     public LoadingScreen getLoadingScreen() {
@@ -49,7 +59,8 @@ public class ScreenManager {
     public void init(StarGame game, SpriteBatch batch) {
         this.game = game;
         this.batch = batch;
-        this.viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT);
+        this.camera = new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT);
+        this.viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, camera);
         this.gameScreen = new GameScreen(batch);
         this.menuScreen = new MenuScreen(batch);
         this.loadingScreen = new LoadingScreen(batch);

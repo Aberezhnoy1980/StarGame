@@ -2,6 +2,7 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +16,8 @@ import com.star.app.screen.utils.Assets;
 public class Hero {
     private GameController gc;
     private TextureRegion texture;
+    private TextureRegion starTexture;
+    private Vector2 tempVector;
     private Vector2 position;
     private Vector2 velocity;
     private float angle;
@@ -30,12 +33,17 @@ public class Hero {
     private StringBuilder sb;
     private Weapon currentWeapon;
     private int gold;
+    private Shop shop;
+    private Weapon[] weapons;
+    private int weaponNum;
 
     public Hero(GameController gc) {
         this.gc = gc;
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
+        this.starTexture = Assets.getInstance().getAtlas().findRegion("star16");
         this.position = new Vector2(640, 360);
         this.velocity = new Vector2(0, 0);
+        this.tempVector = new Vector2(0, 0);
         this.angle = 0.0f;
         this.maxHp = 10;
         this.hp = maxHp;
@@ -44,14 +52,15 @@ public class Hero {
         this.reverseEnginePower = 200.0f;
         this.bulletSpeed = 2000f;
         this.sb = new StringBuilder();
-        this.gold = 0;
+        this.gold = 1000;
+        this.shop = new Shop(this);
+        createWeapons();
+        this.weaponNum = 0;
+        this.currentWeapon = weapons[weaponNum];
+    }
 
-        this.currentWeapon = new Weapon(gc, this, 0.2f, 1, 2000, 100,
-                new Vector3[]{
-                        new Vector3(28, 0, 0),
-                        new Vector3(28, -90, -5),
-                        new Vector3(28, 90, 5),
-                });
+    public Shop getShop() {
+        return shop;
     }
 
     public int getScore() {
@@ -60,6 +69,18 @@ public class Hero {
 
     public int getGold() {
         return gold;
+    }
+
+    public boolean isGoldEnough(int amount) {
+        return gold >= amount;
+    }
+
+    public void decreaseGold(int amount) {
+        gold -= amount;
+    }
+
+    public boolean isAlive() {
+        return hp > 0;
     }
 
     public Vector2 getVelocity() {
@@ -104,7 +125,28 @@ public class Hero {
         sb.append("HP: ").append(hp).append(" / ").append(maxHp).append("\n");
         sb.append("AMMO: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
         sb.append("GOLD: ").append(gold).append("\n");
-        font.draw(batch, sb, 20, 700);
+//        font.draw(batch, sb, 20, 700);
+        font.draw(batch, sb, position.x-ScreenManager.HALF_SCREEN_WIDTH+20, position.y+ScreenManager.HALF_SCREEN_HEIGHT-20);
+
+        float mapX =  position.x + 480;
+        float mapY =  position.y + 200;
+        batch.setColor(Color.GREEN);
+        batch.draw(starTexture, mapX - 24, mapY - 24, 48, 48);
+        batch.setColor(Color.RED);
+        for (int i = 0; i < gc.getAsteroidController().getActiveList().size(); i++) {
+            Asteroid a = gc.getAsteroidController().getActiveList().get(i);
+            float dst = position.dst(a.getPosition());
+            if (dst < 2000.0f) {
+                tempVector.set(a.getPosition()).sub(this.position);
+                tempVector.scl(160.0f / 2000.0f);
+                batch.draw(starTexture, mapX + tempVector.x - 16, mapY + tempVector.y - 16, 32, 32);
+            }
+        }
+
+        batch.setColor(Color.WHITE);
+        for (int i = 0; i < 120; i++) {
+            batch.draw(starTexture, mapX + 160.0f * MathUtils.cosDeg(360.0f / 120.0f * i) - 8, mapY + 160.0f * MathUtils.sinDeg(360.0f / 120.0f * i) - 8);
+        }
     }
 
     public void render(SpriteBatch batch) {
@@ -118,9 +160,7 @@ public class Hero {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             setPause(true);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
-            setPause(false);
+            shop.setVisible(true);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             tryToFire();
@@ -214,6 +254,31 @@ public class Hero {
         }
     }
 
+    public boolean upgrade(Skill skill) {
+        switch (skill) {
+            case HP_MAX:
+                maxHp += 10;
+                return true;
+            case HP:
+                if (hp < maxHp) {
+                    hp += 10;
+                    if (hp > maxHp) {
+                        hp = maxHp;
+                    }
+                    return true;
+                }
+                return false;
+            case WEAPON:
+                if (weaponNum < weapons.length - 1) {
+                    weaponNum++;
+                    currentWeapon = weapons[weaponNum];
+                    return true;
+                }
+                return false;
+        }
+        return false;
+    }
+
     private void tryToFire() {
         if (fireTimer > 0.2f) {
             fireTimer = 0.0f;
@@ -222,22 +287,86 @@ public class Hero {
     }
 
     public void checkBorders() {
-        if (position.x < 32.0f) {
-            position.x = 32.0f;
+        if (position.x < 650.0f) {
+            position.x = 650.0f;
             velocity.x *= -0.3f;
         }
-        if (position.x > ScreenManager.SCREEN_WIDTH - 32) {
-            position.x = ScreenManager.SCREEN_WIDTH - 32f;
+        if (position.x > ScreenManager.SPACE_WIDTH - 650.0f) {
+            position.x = ScreenManager.SPACE_WIDTH - 650.0f;
             velocity.x *= -0.3f;
         }
-        if (position.y < 32.0f) {
-            position.y = 32.0f;
+        if (position.y < 370.0f) {
+            position.y = 370.0f;
             velocity.y *= -0.3f;
         }
-        if (position.y > ScreenManager.SCREEN_HEIGHT - 32.0f) {
-            position.y = ScreenManager.SCREEN_HEIGHT - 32.0f;
+        if (position.y > ScreenManager.SPACE_HEIGHT - 370.0f) {
+            position.y = ScreenManager.SPACE_HEIGHT - 370.0f;
             velocity.y *= -0.3f;
         }
+    }
+
+    public enum Skill {
+        HP_MAX(20), HP(20), WEAPON(100);
+
+        int cost;
+
+        Skill(int cost) {
+            this.cost = cost;
+        }
+    }
+
+    private void createWeapons() {
+        weapons = new Weapon[]{
+                  new Weapon(gc, this, 0.2f, 1, 2000, 100,
+                        new Vector3[]{
+                                new Vector3(28, 0, 0),
+                                new Vector3(28, -90, -5),
+                                new Vector3(28, 90, 5),
+                        }),
+                new Weapon(gc, this, 0.2f, 1, 400, 100,
+                        new Vector3[]{
+                                new Vector3(28, -90, -10),
+                                new Vector3(28, 90, 10),
+                        }),
+                new Weapon(gc, this, 0.2f, 1, 500, 200,
+                        new Vector3[]{
+                                new Vector3(28, 0, 0),
+                                new Vector3(28, -90, -10),
+                                new Vector3(28, 90, 10),
+                        }),
+                new Weapon(gc, this, 0.1f, 1, 700, 500,
+                        new Vector3[]{
+                                new Vector3(28, 0, 0),
+                                new Vector3(28, -90, -10),
+                                new Vector3(28, 90, 10),
+                        }),
+                new Weapon(gc, this, 0.1f, 1, 700, 800,
+                        new Vector3[]{
+                                new Vector3(28, 0, 0),
+                                new Vector3(28, -90, -10),
+                                new Vector3(28, -90, -20),
+                                new Vector3(28, 90, 10),
+                                new Vector3(28, 90, 20),
+                        }),
+                new Weapon(gc, this, 0.1f, 2, 700, 1000,
+                        new Vector3[]{
+                                new Vector3(28, 0, 0),
+                                new Vector3(28, -90, -10),
+                                new Vector3(28, -90, -20),
+                                new Vector3(28, 90, 10),
+                                new Vector3(28, 90, 20),
+                        }),
+                new Weapon(gc, this, 0.2f, 10, 700, 1000,
+                        new Vector3[]{
+                                new Vector3(28, 0, 0),
+                                new Vector3(28, -90, -10),
+                                new Vector3(28, -90, -20),
+                                new Vector3(28, -90, -30),
+                                new Vector3(28, 90, 10),
+                                new Vector3(28, 90, 20),
+                                new Vector3(28, 90, 30),
+                        })
+        };
     }
 
 }

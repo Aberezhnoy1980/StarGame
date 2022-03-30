@@ -85,7 +85,7 @@ public class GameOverScreen extends AbstractScreen {
     }
 
     public void update(float dt) {
-//        background.update(dt);
+        background.update(dt);
         stage.act(dt);
 
     }

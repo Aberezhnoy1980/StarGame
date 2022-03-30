@@ -68,7 +68,7 @@ public class MenuScreen extends AbstractScreen {
 
     public void update(float dt) {
         stage.act(dt);
-//        background.update(dt);
+        background.update(dt);
     }
 
     @Override
