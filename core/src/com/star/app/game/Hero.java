@@ -36,6 +36,7 @@ public class Hero {
     private Shop shop;
     private Weapon[] weapons;
     private int weaponNum;
+    private Circle magneticField;
 
     public Hero(GameController gc) {
         this.gc = gc;
@@ -48,6 +49,7 @@ public class Hero {
         this.maxHp = 10;
         this.hp = maxHp;
         this.hitAria = new Circle(position, 28);
+        this.magneticField = new Circle(position, 50);
         this.directEnginePower = 700.0f;
         this.reverseEnginePower = 200.0f;
         this.bulletSpeed = 2000f;
@@ -57,6 +59,10 @@ public class Hero {
         createWeapons();
         this.weaponNum = 0;
         this.currentWeapon = weapons[weaponNum];
+    }
+
+    public Circle getMagneticField() {
+        return magneticField;
     }
 
     public Shop getShop() {
@@ -125,11 +131,12 @@ public class Hero {
         sb.append("HP: ").append(hp).append(" / ").append(maxHp).append("\n");
         sb.append("AMMO: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
         sb.append("GOLD: ").append(gold).append("\n");
+        sb.append("MAGNET: ").append((int) magneticField.radius).append("\n");
 //        font.draw(batch, sb, 20, 700);
-        font.draw(batch, sb, position.x-ScreenManager.HALF_SCREEN_WIDTH+20, position.y+ScreenManager.HALF_SCREEN_HEIGHT-20);
+        font.draw(batch, sb, position.x - ScreenManager.HALF_SCREEN_WIDTH + 20, position.y + ScreenManager.HALF_SCREEN_HEIGHT - 20);
 
-        float mapX =  position.x + 480;
-        float mapY =  position.y + 200;
+        float mapX = position.x + 480;
+        float mapY = position.y + 200;
         batch.setColor(Color.GREEN);
         batch.draw(starTexture, mapX - 24, mapY - 24, 48, 48);
         batch.setColor(Color.RED);
@@ -224,6 +231,7 @@ public class Hero {
         }
         velocity.scl(stopFactor);
         hitAria.setPosition(position);
+        magneticField.setPosition(position);
 
         checkBorders();
     }
@@ -275,6 +283,12 @@ public class Hero {
                     return true;
                 }
                 return false;
+            case MAGNET:
+                if (magneticField.radius < 500) {
+                    magneticField.radius += 10;
+                    return true;
+                }
+                return false;
         }
         return false;
     }
@@ -305,19 +319,9 @@ public class Hero {
         }
     }
 
-    public enum Skill {
-        HP_MAX(20), HP(20), WEAPON(100);
-
-        int cost;
-
-        Skill(int cost) {
-            this.cost = cost;
-        }
-    }
-
     private void createWeapons() {
         weapons = new Weapon[]{
-                  new Weapon(gc, this, 0.2f, 1, 2000, 100,
+                new Weapon(gc, this, 0.2f, 1, 2000, 100,
                         new Vector3[]{
                                 new Vector3(28, 0, 0),
                                 new Vector3(28, -90, -5),
@@ -367,6 +371,16 @@ public class Hero {
                                 new Vector3(28, 90, 30),
                         })
         };
+    }
+
+    public enum Skill {
+        HP_MAX(20), HP(20), WEAPON(100), MAGNET(50);
+
+        int cost;
+
+        Skill(int cost) {
+            this.cost = cost;
+        }
     }
 
 }
