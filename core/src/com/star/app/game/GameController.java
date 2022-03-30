@@ -7,9 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.star.app.screen.ScreenManager;
 
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
-
 public class GameController {
 
     private Background background;
@@ -142,6 +139,11 @@ public class GameController {
         // столкновения призов и героя
         for (int i = 0; i < puc.getActiveList().size(); i++) {
             PowerUp p = puc.getActiveList().get(i);
+            if (hero.getMagneticField().contains(p.getPosition())) {
+                tempVector.set(hero.getPosition()).sub(p.getPosition()).nor();
+                p.getVelocity().mulAdd(tempVector, 100);
+            }
+
             if (hero.getHitAria().contains(p.getPosition())) {
                 hero.consume(p);
                 pc.getEffectBuilder().takePowerUpsEffect(p);
@@ -150,7 +152,7 @@ public class GameController {
         }
     }
 
-    public void dispose(){
+    public void dispose() {
         background.dispose();
     }
 }
