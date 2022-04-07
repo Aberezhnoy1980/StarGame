@@ -1,61 +1,118 @@
 
 game.pack.png
+size: 2048, 512
 format: RGBA8888
-filter: Linear,Linear
+filter: Nearest, Nearest
 repeat: none
 asteroid
   rotate: false
-  xy: 2, 2
+  xy: 844, 254
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
-powerups
+boss
   rotate: false
-  xy: 2, 260
-  size: 360, 240
-  orig: 360, 240
-  offset: 0, 0
-  index: -1
-simpleButton
-  rotate: false
-  xy: 2, 502
-  size: 320, 80
-  orig: 320, 80
-  offset: 0, 0
-  index: -1
-shortButton
-  rotate: false
-  xy: 260, 2
-  size: 80, 80
-  orig: 80, 80
-  offset: 0, 0
-  index: -1
-ship
-  rotate: false
-  xy: 342, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-smButton
-  rotate: false
-  xy: 260, 84
-  size: 120, 32
-  orig: 120, 32
+  xy: 844, 91
+  size: 142, 161
+  orig: 142, 161
   offset: 0, 0
   index: -1
 bullet
   rotate: false
-  xy: 408, 2
+  xy: 448, 110
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
+cancelRGB
+  rotate: false
+  xy: 2, 20
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+confirmRGB
+  rotate: false
+  xy: 932, 49
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+futurama_crash
+  rotate: false
+  xy: 2, 144
+  size: 478, 366
+  orig: 478, 366
+  offset: 0, 0
+  index: -1
+new ship
+  rotate: false
+  xy: 844, 2
+  size: 86, 87
+  orig: 86, 87
+  offset: 0, 0
+  index: -1
+playRGB
+  rotate: false
+  xy: 988, 212
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+powerUpsSprite
+  rotate: false
+  xy: 482, 85
+  size: 360, 425
+  orig: 360, 425
+  offset: 0, 0
+  index: -1
+shortButton
+  rotate: false
+  xy: 324, 62
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+simpleButton
+  rotate: false
+  xy: 2, 62
+  size: 320, 80
+  orig: 320, 80
+  offset: 0, 0
+  index: -1
+sliderBG
+  rotate: false
+  xy: 1102, 501
+  size: 256, 9
+  orig: 256, 9
+  offset: 0, 0
+  index: -1
+sliderGreenKnobSph
+  rotate: false
+  xy: 1102, 440
+  size: 25, 25
+  orig: 25, 25
+  offset: 0, 0
+  index: -1
+smButton
+  rotate: false
+  xy: 1102, 467
+  size: 120, 32
+  orig: 120, 32
+  offset: 0, 0
+  index: -1
 star16
   rotate: false
-  xy: 408, 36
+  xy: 2, 2
   size: 16, 16
   orig: 16, 16
+  offset: 0, 0
+  index: -1
+stopPlayRGB
+  rotate: false
+  xy: 406, 102
+  size: 40, 40
+  orig: 40, 40
   offset: 0, 0
   index: -1

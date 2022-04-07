@@ -12,6 +12,7 @@ public class PowerUp implements Poolable {
     private boolean active;
     private PowerUpsType type;
     private int power;
+
     public PowerUp(GameController gc) {
         this.gc = gc;
         this.position = new Vector2(0, 0);
@@ -67,8 +68,9 @@ public class PowerUp implements Poolable {
     }
 
     public enum PowerUpsType {
-        HEALTH(0), GOLD(1), AMMO(2);
-        int index;
+        HEALTH(4), GOLD(1), AMMO(6), MAGNET(3), NUCLEAR(5);
+
+        final int index;
 
         PowerUpsType(int index) {
             this.index = index;

@@ -18,18 +18,23 @@ public class ScreenManager {
     public static final int SCREEN_HEIGHT = 720;
     public static final int HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2;
     public static final int HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2;
-    private static ScreenManager ourInstance = new ScreenManager();
+    private static final ScreenManager ourInstance = new ScreenManager();
     private StarGame game;
     private SpriteBatch batch;
     private LoadingScreen loadingScreen;
     private GameScreen gameScreen;
     private MenuScreen menuScreen;
     private GameOverScreen gameOverScreen;
+    private SettingsScreen settingsScreen;
     private Screen targetScreen;
     private Viewport viewport;
     private Camera camera;
 
     private ScreenManager() {
+    }
+
+    public SettingsScreen getSettingsScreen() {
+        return settingsScreen;
     }
 
     public static ScreenManager getInstance() {
@@ -44,18 +49,6 @@ public class ScreenManager {
         return camera;
     }
 
-    public LoadingScreen getLoadingScreen() {
-        return loadingScreen;
-    }
-
-    public void setLoadingScreen(LoadingScreen loadingScreen) {
-        this.loadingScreen = loadingScreen;
-    }
-
-    public enum ScreenType {
-        GAME, MENU, GAME_OVER
-    }
-
     public void init(StarGame game, SpriteBatch batch) {
         this.game = game;
         this.batch = batch;
@@ -64,6 +57,7 @@ public class ScreenManager {
         this.gameScreen = new GameScreen(batch);
         this.menuScreen = new MenuScreen(batch);
         this.loadingScreen = new LoadingScreen(batch);
+        this.settingsScreen = new SettingsScreen(batch);
         this.gameOverScreen = new GameOverScreen(batch);
     }
 
@@ -93,6 +87,10 @@ public class ScreenManager {
                 gameOverScreen.setDefeatedHero((Hero) args[0]);
                 Assets.getInstance().loadAssets(ScreenManager.ScreenType.GAME_OVER);
                 break;
+            case SETTINGS:
+                targetScreen = settingsScreen;
+                Assets.getInstance().loadAssets(ScreenType.SETTINGS);
+                break;
         }
     }
 
@@ -100,4 +98,7 @@ public class ScreenManager {
         game.setScreen(targetScreen);
     }
 
+    public enum ScreenType {
+        GAME, MENU, GAME_OVER, SETTINGS
+    }
 }

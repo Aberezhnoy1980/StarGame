@@ -1,11 +1,9 @@
 package com.star.app.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.helpers.Poolable;
 
 public class Particle implements Poolable {
-    private GameController gc;
     private Vector2 position;
     private Vector2 velocity;
     private float r1, g1, b1, a1;
@@ -77,8 +75,7 @@ public class Particle implements Poolable {
         return active;
     }
 
-    public Particle(GameController gc) {
-        this.gc = gc;
+    public Particle() {
         position = new Vector2(0, 0);
         velocity = new Vector2(0, 0);
         size1 = 1.0f;
