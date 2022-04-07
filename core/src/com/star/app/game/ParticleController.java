@@ -8,11 +8,10 @@ import com.star.app.game.helpers.ObjectPool;
 import com.star.app.screen.utils.Assets;
 
 public class ParticleController extends ObjectPool<Particle> {
-    private GameController gc;
-    private TextureRegion oneParticle;
-    private EffectBuilder effectBuilder;
-    public ParticleController(GameController gc) {
-        this.gc = gc;
+    private final TextureRegion oneParticle;
+    private final EffectBuilder effectBuilder;
+
+    public ParticleController() {
         this.oneParticle = Assets.getInstance().getAtlas().findRegion("star16");
         this.effectBuilder = new EffectBuilder();
     }
@@ -23,7 +22,7 @@ public class ParticleController extends ObjectPool<Particle> {
 
     @Override
     protected Particle newObject() {
-        return new Particle(gc);
+        return new Particle();
     }
 
     public void render(SpriteBatch batch) {
@@ -83,6 +82,11 @@ public class ParticleController extends ObjectPool<Particle> {
             }
         }
 
+//        public void nuclearSky() {
+//                gc.getScreenManager().getGameScreen();
+//                setup(0, 0, 0, 0, 3.0f, 2.0f, 1.8f, 1, 0, 0, 1, 1, 0, 0, 0.2f);
+//            }
+
         public void takePowerUpsEffect(PowerUp p) {
             switch (p.getType()) {
                 case HEALTH:
@@ -115,7 +119,77 @@ public class ParticleController extends ObjectPool<Particle> {
                                 1, 0, 0.8f, 0.4f);
                     }
                     break;
+                case MAGNET:
+                    for (int i = 0; i < 16; i++) {
+                        float angle = 6.28f / 16.0f * i;
+                        setup(p.getPosition().x, p.getPosition().y,
+                                (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f,
+                                0.8f, 3.0f, 2.5f,
+                                0.0f, 0.0f, 1.0f, 1,
+                                0.2f, 0.0f, 1.0f, 0.4f);
+                    }
+                    break;
+                case NUCLEAR:
+                    for (int i = 0; i < 16; i++) {
+                        float angle = 6.28f / 16.0f * i;
+                        setup(p.getPosition().x, p.getPosition().y,
+                                (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f,
+                                10.0f, 10.0f, 2.5f,
+                                1.0f, 1.0f, 1.0f, 1,
+                                0.2f, 0.0f, 0.0f, 0.4f);
+                    }
+                    break;
             }
+        }
+
+        public void bulletCollideWithAsteroid(Bullet b) {
+            setup(b.getPosition().x + MathUtils.random(-4, 4), b.getPosition().y + MathUtils.random(-4, 4),
+                    b.getVelocity().x * -0.3f + MathUtils.random(-50, 50), b.getVelocity().y * -0.3f + MathUtils.random(-30, 30),
+                    0.2f,
+                    10.5f, 1.2f,
+                    1.0f, 0.5f, 0.0f, 1.0f,
+                    1.0f, 1.0f, 1.0f, 0.0f);
+        }
+
+        public void botDestroy(Bot b) {
+            for (int i = 0; i < 16; i++) {
+                float angle = 6.28f / 16.0f * i;
+                setup(b.getPosition().x, b.getPosition().y,
+                        (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f,
+                        10.0f, 10.0f, 2.5f,
+                        1.0f, 1.0f, 1.0f, 1,
+                        0.2f, 0.0f, 0.0f, 0.4f);
+            }
+        }
+
+        public void createBulletTrace(Bullet b) {
+            switch (b.getOwner().getShipOwner()) {
+                case HERO:
+                    for (int i = 0; i < 2; i++) {
+                        setup(b.getPosition().x + MathUtils.random(-4, 4),
+                                b.getPosition().y + MathUtils.random(-4, 4),
+                                b.getVelocity().x * -0.1f + MathUtils.random(-20, 20),
+                                b.getVelocity().y * -0.1f + MathUtils.random(-20, 20),
+                                0.1f,
+                                1.5f, 0.2f,
+                                0.0f, 0.5f, 1.0f, 1.0f,
+                                0.0f, 0.7f, 1.0f, 0.0f);
+                    }
+                    break;
+                case BOT:
+                    for (int i = 0; i < 2; i++) {
+                        setup(b.getPosition().x,
+                                b.getPosition().y,
+                                b.getVelocity().x * -0.1f + MathUtils.random(-20, 20),
+                                b.getVelocity().y * -0.1f + MathUtils.random(-20, 20),
+                                0.1f,
+                                2.2f, 1.5f,
+                                0.0f, 0.5f, 0.0f, 1.0f,
+                                0.0f, 0.7f, 0.0f, 0.0f);
+                    }
+                    break;
+            }
+
         }
     }
 }

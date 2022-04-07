@@ -17,7 +17,7 @@ public class PowerUpsController extends ObjectPool<PowerUp> {
 
     public PowerUpsController(GameController gc) {
         this.gc = gc;
-        this.textures = new TextureRegion(Assets.getInstance().getAtlas().findRegion("powerups"))
+        this.textures = new TextureRegion(Assets.getInstance().getAtlas().findRegion("powerUpsSprite"))
                 .split(60, 60);
     }
 
@@ -32,7 +32,7 @@ public class PowerUpsController extends ObjectPool<PowerUp> {
 
     public void setup(float x, float y, float probability) {
         if (MathUtils.random() <= probability) {
-            getActiveElement().activate(PowerUp.PowerUpsType.values()[MathUtils.random(0, 2)], x, y, 30);
+            getActiveElement().activate(PowerUp.PowerUpsType.values()[MathUtils.random(0, 4)], x, y, 30);
         }
     }
 

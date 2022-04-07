@@ -1,6 +1,7 @@
 package com.star.app.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -19,6 +20,7 @@ public class MenuScreen extends AbstractScreen {
     private BitmapFont font18;
     private Stage stage;
     private Background background;
+    private Music music;
 
     public MenuScreen(SpriteBatch batch) {
         super(batch);
@@ -44,8 +46,10 @@ public class MenuScreen extends AbstractScreen {
 
         Button btnNewGame = new TextButton("New Game", textButtonStyle);
         Button btnExitGame = new TextButton("Exit Game", textButtonStyle);
-        btnNewGame.setPosition(480, 210);
+        Button btnGameSettings = new TextButton("Settings", textButtonStyle);
+        btnNewGame.setPosition(110, 110);
         btnExitGame.setPosition(480, 110);
+        btnGameSettings.setPosition(850, 110);
 
         btnNewGame.addListener(new ChangeListener() {
             @Override
@@ -61,9 +65,22 @@ public class MenuScreen extends AbstractScreen {
             }
         });
 
+        btnGameSettings.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.SETTINGS);
+            }
+        });
+
         stage.addActor(btnNewGame);
         stage.addActor(btnExitGame);
+        stage.addActor(btnGameSettings);
         skin.dispose();
+
+        this.music = Assets.getInstance().getAssetManager().get("audio/music.mp3");
+        this.music.setLooping(true);
+        this.music.play();
+        this.music.setVolume(ScreenManager.getInstance().getSettingsScreen().getPreferences().getMusicVolume());
     }
 
     public void update(float dt) {

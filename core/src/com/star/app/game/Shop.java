@@ -16,15 +16,16 @@ import com.star.app.screen.utils.Assets;
 
 
 public class Shop extends Group {
+    private GameController gc;
     private Hero hero;
     private BitmapFont font20;
 
-    public Shop(final Hero hero) {
+    public Shop(final Hero hero, final GameController gc) {
+        this.gc = gc;
         this.hero = hero;
         font20 = Assets.getInstance().getAssetManager().get("fonts/font20.ttf");
-
         Pixmap pixmap = new Pixmap(400, 400, Pixmap.Format.RGB888);
-        pixmap.setColor(0, 0, 0.5f, 1);
+        pixmap.setColor(0.0f, 0.0f, 0.5f, 1.0f);
         pixmap.fill();
 
         Image image = new Image(new Texture(pixmap));
@@ -46,6 +47,7 @@ public class Shop extends Group {
             public void changed(ChangeEvent event, Actor actor) {
                 thisShop.setVisible(false);
                 hero.setPause(false);
+                gc.getMusic().play();
             }
         });
         btnClose.setTransform(true);
@@ -59,10 +61,11 @@ public class Shop extends Group {
         btnHpMax.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(hero.isGoldEnough(Hero.Skill.HP_MAX.cost)){
-                    if(hero.upgrade(Hero.Skill.HP_MAX)){
+                if (hero.isGoldEnough(Hero.Skill.HP_MAX.cost)) {
+                    if (hero.upgrade(Hero.Skill.HP_MAX)) {
                         hero.decreaseGold(Hero.Skill.HP_MAX.cost);
-                    };
+                        hero.getHealthUp().play();
+                    }
                 }
             }
         });
@@ -78,10 +81,11 @@ public class Shop extends Group {
         btnHp.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(hero.isGoldEnough(Hero.Skill.HP.cost)){
-                    if(hero.upgrade(Hero.Skill.HP)){
+                if (hero.isGoldEnough(Hero.Skill.HP.cost)) {
+                    if (hero.upgrade(Hero.Skill.HP)) {
                         hero.decreaseGold(Hero.Skill.HP.cost);
-                    };
+                        hero.getHealthUp().play();
+                    }
                 }
             }
         });
@@ -97,10 +101,11 @@ public class Shop extends Group {
         btnWeapon.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(hero.isGoldEnough(Hero.Skill.WEAPON.cost)){
-                    if (hero.upgrade(Hero.Skill.WEAPON)){
+                if (hero.isGoldEnough(Hero.Skill.WEAPON.cost)) {
+                    if (hero.upgrade(Hero.Skill.WEAPON)) {
                         hero.decreaseGold(Hero.Skill.WEAPON.cost);
-                    };
+                        hero.getAmmoUp().play();
+                    }
                 }
             }
         });
@@ -115,10 +120,11 @@ public class Shop extends Group {
         btnMagnet.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(hero.isGoldEnough(Hero.Skill.MAGNET.cost)){
-                    if (hero.upgrade(Hero.Skill.MAGNET)){
+                if (hero.isGoldEnough(Hero.Skill.MAGNET.cost)) {
+                    if (hero.upgrade(Hero.Skill.MAGNET)) {
                         hero.decreaseGold(Hero.Skill.MAGNET.cost);
-                    };
+                        hero.getMagnetUp().play();
+                    }
                 }
             }
         });
@@ -168,7 +174,6 @@ public class Shop extends Group {
         btnExitGame.setPosition(210f, 124f);
         this.addActor(btnExitGame);
 
-        this.setPosition(hero.getPosition().x - 620, hero.getPosition().y - 340);
         setVisible(false);
         skin.dispose();
     }
